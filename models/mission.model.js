@@ -22,9 +22,19 @@ const MissionSchema = new mongoose.Schema(
     },
     missionLocation: {
       type: String,
+      required: true,
     },
     employeesOnIt: {
-      type: [String],
+      type: [
+        {
+          employeeId: String,
+          employeeName: String,
+          employeeSurname: String,
+          employeeBeginAt: Date,
+          employeeEndAt: Date,
+          timestamp: Number,
+        },
+      ],
     },
   },
   {
