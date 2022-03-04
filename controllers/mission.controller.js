@@ -86,17 +86,26 @@ module.exports.addEmployee = (req, res) => {
 };
 //modif employé sur une mission
 module.exports.editEmployeeMission = (req, res) => {
-  if (!ObjectID.isValid(req.params.id))
+  /* if (!ObjectID.isValid(req.params.id))
     //params == parametre passé dans l'url
     return res.status(400).send("Unknow ID: " + req.params.id);
-
-  try {
+  try{
+    return missionModel.findById(
+      req.params.id,
+      ()
+    )
+  } catch (error) {
+    res.status(400).send("Employee not found" + error);
+  } */
+};
+/* try {
     return missionModel.findById(req.params.id, (err, docs) => {
       const theEmployee = docs.employeesOnIt.find((emp) => {
         if (emp.employeeId == req.body.employeeId) return emp.employeeId;
       });
       if (!theEmployee) return res.status(404).send("Employee not found");
       theEmployee.employeeBeginAt = req.body.beginAt;
+      theEmployee.employeeEndAt = req.body.endAt;
 
       return docs.save((err) => {
         if (!err) return res.status(200).send(docs);
@@ -106,7 +115,7 @@ module.exports.editEmployeeMission = (req, res) => {
   } catch (err) {
     return res.status(404).send(err);
   }
-};
+}; */
 
 //suppression employé d'une mission
 module.exports.deleteEmployeeMission = (req, res) => {
