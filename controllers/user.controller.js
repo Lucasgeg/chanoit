@@ -22,18 +22,6 @@ module.exports.userUpdate = (req, res) => {
   if (!ObjectID.isValid(req.params.id))
     return res.status(400).send("ID unknown : " + req.params.id);
 
-  try {
-    UserModel.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: req.body,
-      },
-      { new: true },
-      (err, docs) => {
-        if (!err) return res.send(docs);
-        if (err) return res.status(500).send({ message: err });
-      }
-    ).select("-password");
   } catch (err) {
     return res.status(500).json({ message: err });
   }
