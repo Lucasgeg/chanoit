@@ -1,5 +1,7 @@
 const UserModel = require("../models/user.model");
 const missionModel = require("../models/mission.model");
+const { json } = require("body-parser");
+const { findOne, findById, find } = require("../models/user.model");
 const ObjectID = require("mongoose").Types.ObjectId;
 
 module.exports.getAllMission = (req, res) => {
@@ -30,22 +32,21 @@ module.exports.missionInfo = async (req, res) => {
     else console.log("Unknow Id: " + err);
   });
 };
-module.exports.missionUpdate = (req, res) => {
+module.exports.missionUpdate = async (req, res) => {
   if (!ObjectID.isValid(req.params.id))
     return res.status(400).send("Unknow ID: " + req.params.id);
-  try {
-    missionModel.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
-      { new: true },
-      (err, docs) => {
-        if (!err) res.send(docs);
-        else console.log("Updated error: " + err);
-      }
-    );
-  } catch (error) {
-    return res.status(200).json(error);
-  }
+  const newValues = { $set: req.body };
+  missionModel.updateOne(
+    { _id: req.params.id },
+    newValues,
+    function (err, docs) {
+      if (err) return res.json({ message: "mission not found" });
+      else res.status(200).json({ message: "update succes", New_values: docs });
+    }
+  );
+  /* const result = await update.save();
+      console.log(result);
+      res.status(200).json(result); */
 };
 module.exports.missionDelete = (req, res) => {
   if (!ObjectID.isValid(req.params.id))
@@ -86,26 +87,17 @@ module.exports.addEmployee = (req, res) => {
 };
 //modif employé sur une mission
 module.exports.editEmployeeMission = (req, res) => {
-  /* if (!ObjectID.isValid(req.params.id))
+  if (!ObjectID.isValid(req.params.id))
     //params == parametre passé dans l'url
     return res.status(400).send("Unknow ID: " + req.params.id);
-  try{
-    return missionModel.findById(
-      req.params.id,
-      ()
-    )
-  } catch (error) {
-    res.status(400).send("Employee not found" + error);
-  } */
-};
-/* try {
+  try {
     return missionModel.findById(req.params.id, (err, docs) => {
       const theEmployee = docs.employeesOnIt.find((emp) => {
         if (emp.employeeId == req.body.employeeId) return emp.employeeId;
       });
       if (!theEmployee) return res.status(404).send("Employee not found");
-      theEmployee.employeeBeginAt = req.body.beginAt;
-      theEmployee.employeeEndAt = req.body.endAt;
+      if (req.body.beginAt) theEmployee.employeeBeginAt = req.body.beginAt;
+      if (req.body.endAt) theEmployee.employeeEndAt = req.body.endAt;
 
       return docs.save((err) => {
         if (!err) return res.status(200).send(docs);
@@ -115,7 +107,7 @@ module.exports.editEmployeeMission = (req, res) => {
   } catch (err) {
     return res.status(404).send(err);
   }
-}; */
+};
 
 //suppression employé d'une mission
 module.exports.deleteEmployeeMission = (req, res) => {
